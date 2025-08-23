@@ -1,0 +1,13 @@
+.app-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.app-navbar > a {
+  margin: 10px;
+  text-align: justify;
+  text-decoration: none;
+  color: white;
+}

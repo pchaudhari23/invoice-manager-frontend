@@ -1,0 +1,10 @@
+.app-footer {
+  padding: 16px;
+  text-align: center;
+  background: black;
+  grid-area: footer;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

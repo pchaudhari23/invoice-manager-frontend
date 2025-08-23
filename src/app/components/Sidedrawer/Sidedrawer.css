@@ -1,0 +1,14 @@
+.app-sidebar {
+  padding: 16px;
+  text-align: center;
+  background: #fa923f;
+  grid-area: sidebar;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-sidebar > a {
+  margin: 10px;
+  text-align: justify;
+  text-decoration: none;
+}
