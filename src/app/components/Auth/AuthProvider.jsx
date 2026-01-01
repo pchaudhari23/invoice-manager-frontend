@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 const AuthContext = createContext(undefined);
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // TO - DO: set to false in production
 
   const login = () => setIsAuthenticated(true);
   const logout = () => setIsAuthenticated(false);

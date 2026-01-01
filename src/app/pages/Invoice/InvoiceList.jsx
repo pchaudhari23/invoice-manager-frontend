@@ -43,7 +43,7 @@ const InvoiceList = () => {
   ];
 
   return (
-    <div>
+    <Box sx={{ width: "100%" }}>
       <Typography variant="subtitle1" gutterBottom>
         Invoice List
       </Typography>
@@ -56,7 +56,7 @@ const InvoiceList = () => {
           checkboxSelection
         />
       </Box>
-    </div>
+    </Box>
   );
 };
 

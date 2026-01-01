@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { Grid, Typography, Box, Paper, Divider, Chip } from "@mui/material";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 
 const InvoiceDetails = ({ invoiceId, fetchInvoiceById }) => {
@@ -35,74 +33,125 @@ const InvoiceDetails = ({ invoiceId, fetchInvoiceById }) => {
   }
 
   return (
-    <Box maxWidth="sm" mx="auto" py={4}>
-      <Typography variant="h5" align="center" gutterBottom>
-        Invoice Details
-      </Typography>
+    <Box
+      sx={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)",
+        px: 2,
+      }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          p: 5,
+          width: "100%",
+          maxWidth: 700,
+          borderRadius: 4,
+          background: "rgba(255,255,255,0.98)",
+          boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
+        }}
+      >
+        <Typography
+          variant="h4"
+          align="center"
+          fontWeight={700}
+          color="primary"
+          gutterBottom
+        >
+          Invoice Details
+        </Typography>
+        <Divider sx={{ mb: 3 }} />
 
-      <Paper elevation={3} sx={{ p: 3 }}>
-        <Grid container spacing={3} direction="column">
+        <Grid container spacing={3}>
           {/* Client Name */}
           <Grid item xs={12}>
-            <Typography variant="subtitle2" color="textSecondary">
+            <Typography variant="subtitle2" color="text.secondary">
               Client Name
             </Typography>
-            <Typography variant="body1">{invoice.clientName}</Typography>
+            <Typography variant="h6" fontWeight={600}>
+              {invoice.clientName}
+            </Typography>
           </Grid>
 
           {/* Service Description */}
           <Grid item xs={12}>
-            <Typography variant="subtitle2" color="textSecondary">
+            <Typography variant="subtitle2" color="text.secondary">
               Service Description
             </Typography>
-            <Typography variant="body1" whiteSpace="pre-line">
+            <Typography
+              variant="body1"
+              sx={{ whiteSpace: "pre-line", fontStyle: "italic" }}
+            >
               {invoice.service}
             </Typography>
           </Grid>
 
           {/* Amount + Invoice Date */}
           <Grid item xs={12}>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" color="textSecondary">
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              gap={6}
+              py={2}
+            >
+              <Box textAlign="center">
+                <Typography variant="subtitle2" color="text.secondary">
                   Amount
                 </Typography>
-                <Typography variant="body1">${invoice.amount}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" color="textSecondary">
+                <Typography
+                  variant="h5"
+                  fontWeight={700}
+                  color="success.main"
+                  mt={0.5}
+                >
+                  ${invoice.amount}
+                </Typography>
+              </Box>
+              <Divider orientation="vertical" flexItem />
+              <Box textAlign="center">
+                <Typography variant="subtitle2" color="text.secondary">
                   Invoice Date
                 </Typography>
-                <Typography variant="body1">
+                <Typography variant="h6" fontWeight={600} mt={0.5}>
                   {invoice.invoiceDate
                     ? moment(invoice.invoiceDate).format("YYYY-MM-DD")
                     : "-"}
                 </Typography>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
           </Grid>
 
           {/* Payment Method */}
-          <Grid item xs={12}>
-            <Typography variant="subtitle2" color="textSecondary">
+          <Grid item xs={12} sm={6}>
+            <Typography variant="subtitle2" color="text.secondary">
               Payment Method
             </Typography>
             <Chip
               label={invoice.paymentMethod?.toUpperCase() || "-"}
               color="primary"
               variant="outlined"
+              sx={{ fontWeight: 600, mt: 1 }}
             />
           </Grid>
 
           {/* Payment Status */}
-          <Grid item xs={12}>
-            <Typography variant="subtitle2" color="textSecondary">
+          <Grid item xs={12} sm={6}>
+            <Typography variant="subtitle2" color="text.secondary">
               Payment Status
             </Typography>
             <Chip
               label={invoice.isPaid ? "Paid" : "Unpaid"}
               color={invoice.isPaid ? "success" : "warning"}
               variant="outlined"
+              sx={{ fontWeight: 600, mt: 1 }}
             />
           </Grid>
         </Grid>
