@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Grid,
   Typography,
@@ -17,9 +18,15 @@ import {
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
-import { createInvoice } from "../../../network/invoiceapi";
+import {
+  createInvoice,
+  getInvoiceDetails,
+  updateInvoiceReq,
+} from "../../../network/invoiceapi";
 
 const InvoiceAddEdit = ({ mode }) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const initialState = {
     clientName: "",
     amount: "",
@@ -30,15 +37,36 @@ const InvoiceAddEdit = ({ mode }) => {
   };
 
   const [invoice, setInvoice] = useState(initialState);
+  const [loading, setLoading] = useState(mode === "EDIT");
 
   useEffect(() => {
-    if (mode === "edit") {
-    } // Logic to fetch existing invoice data for editing can be added here
-  }, [mode]);
+    if (mode === "EDIT" && id) {
+      fetchInvoiceDetails();
+    }
+  }, [mode, id]);
+
+  const fetchInvoiceDetails = async () => {
+    try {
+      const data = await getInvoiceDetails(id);
+      if (data) {
+        setInvoice({
+          clientName: data.clientName,
+          amount: data.amount,
+          service: data.service,
+          paymentMethod: data.paymentMethod,
+          invoiceDate: moment(data.invoiceDate),
+          isPaid: data.isPaid,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching invoice details:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-    console.log("INVOICE DATA:", invoice);
     let formattedDate = null;
     if (invoice.invoiceDate) {
       formattedDate = moment(invoice.invoiceDate).format("YYYY-MM-DD");
@@ -47,9 +75,17 @@ const InvoiceAddEdit = ({ mode }) => {
       ...invoice,
       invoiceDate: formattedDate,
     };
-    await createInvoice(invoiceData);
-    setInvoice(initialState); // Reset form after submission
-    console.log("INVOICE DATA:", invoiceData);
+
+    try {
+      if (mode === "EDIT" && id) {
+        await updateInvoiceReq(id, invoiceData);
+      } else {
+        await createInvoice(invoiceData);
+      }
+      navigate("/invoices");
+    } catch (error) {
+      console.error("Error submitting invoice:", error);
+    }
   };
 
   const handleInputChange = (event) => {
@@ -65,30 +101,44 @@ const InvoiceAddEdit = ({ mode }) => {
     setInvoice({ ...invoice, invoiceDate: date });
   };
 
+  if (loading) {
+    return (
+      <Box
+        maxWidth="sm"
+        mx="auto"
+        py={4}
+        minHeight="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography>Loading...</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box
-      maxWidth="sm"
-      mx="auto"
-      py={4}
       minHeight="100vh"
       display="flex"
       alignItems="center"
       justifyContent="center"
       bgcolor="linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)"
+      flex={1}
+      paddingTop={"20px"}
     >
       <Paper
         elevation={6}
         sx={{
           p: 4,
-          maxWidth: 540,
           width: "100%",
-          borderRadius: 4,
+          borderRadius: 1,
           boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
           background: "rgba(255,255,255,0.98)",
         }}
       >
         <Typography variant="h5" align="center" gutterBottom>
-          {mode === "edit" ? "Edit Invoice" : "Add Invoice"}
+          {mode === "EDIT" ? "Edit Invoice" : "Add Invoice"}
         </Typography>
 
         <form onSubmit={handleFormSubmit}>
@@ -195,7 +245,7 @@ const InvoiceAddEdit = ({ mode }) => {
             <Grid item xs={12}>
               <Box textAlign="center">
                 <Button variant="contained" color="primary" type="submit">
-                  Submit Invoice
+                  {mode === "EDIT" ? "Update Invoice" : "Submit Invoice"}
                 </Button>
               </Box>
             </Grid>

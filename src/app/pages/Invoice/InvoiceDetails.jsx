@@ -1,59 +1,83 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Grid, Typography, Box, Paper, Divider, Chip } from "@mui/material";
 import moment from "moment";
+import { getInvoiceDetails } from "../../../network/invoiceapi";
 
-const InvoiceDetails = ({ invoiceId, fetchInvoiceById }) => {
-  const [invoice, setInvoice] = useState({
-    clientName: "Acme Corporation",
-    amount: 1200.5,
-    service:
-      "Website design and development\nIncluding mobile responsive design and SEO optimization.",
-    paymentMethod: "card",
-    invoiceDate: "2025-08-01",
-    isPaid: true,
-  });
+const InvoiceDetails = () => {
+  const { id } = useParams();
+  const [invoice, setInvoice] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch invoice details by ID (you can replace this with your actual fetching logic)
     const loadInvoice = async () => {
-      if (fetchInvoiceById && invoiceId) {
-        const data = await fetchInvoiceById(invoiceId);
-        setInvoice(data);
+      try {
+        if (id) {
+          const data = await getInvoiceDetails(id);
+          setInvoice(data);
+        }
+      } catch (error) {
+        console.error("Error fetching invoice details:", error);
+      } finally {
+        setLoading(false);
       }
     };
     loadInvoice();
-  }, [invoiceId, fetchInvoiceById]);
+  }, [id]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant="h6">Loading invoice details...</Typography>
+      </Box>
+    );
+  }
 
   if (!invoice) {
     return (
-      <Typography variant="h6" align="center" mt={4}>
-        Loading invoice details...
-      </Typography>
+      <Box
+        sx={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant="h6">Invoice not found</Typography>
+      </Box>
     );
   }
 
   return (
     <Box
       sx={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        flex:1,
         bgcolor: "linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%)",
-        px: 2,
       }}
     >
       <Paper
         elevation={6}
         sx={{
-          p: 5,
-          width: "100%",
-          maxWidth: 700,
-          borderRadius: 4,
+          p: 3,
+          borderRadius: 1,
           background: "rgba(255,255,255,0.98)",
           boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.15)",
         }}
